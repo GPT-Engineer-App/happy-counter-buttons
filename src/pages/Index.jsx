@@ -1,11 +1,26 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Plus, Minus } from "lucide-react";
 
 const Index = () => {
+  const [count, setCount] = useState(0);
+
+  const increment = () => setCount(prev => prev + 1);
+  const decrement = () => setCount(prev => prev - 1);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+        <h1 className="text-4xl font-bold mb-4">Counter App</h1>
+        <div className="flex items-center justify-center space-x-4">
+          <Button onClick={decrement} variant="outline" size="icon">
+            <Minus className="h-4 w-4" />
+          </Button>
+          <span className="text-2xl font-bold">{count}</span>
+          <Button onClick={increment} variant="outline" size="icon">
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );
