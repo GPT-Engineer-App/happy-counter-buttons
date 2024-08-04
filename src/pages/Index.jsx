@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Plus, Minus } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const Index = () => {
   const [count, setCount] = useState(0);
-  const [showMessage, setShowMessage] = useState(false);
   const [shake, setShake] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const triggerShake = () => {
     setShake(true);
@@ -19,15 +20,24 @@ const Index = () => {
   };
 
   const decrement = () => {
-    setCount(prev => prev - 1);
+    setCount(prev => Math.max(0, prev - 1));
     triggerShake();
   };
 
   useEffect(() => {
-    if (count % 5 === 0 && count !== 0) {
-      setShowMessage(true);
-      const timer = setTimeout(() => setShowMessage(false), 3000);
-      return () => clearTimeout(timer);
+    if (count > 5) {
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 1;
+        });
+      }, 50);
+      return () => clearInterval(interval);
+    } else {
+      setProgress(0);
     }
   }, [count]);
 
@@ -45,20 +55,8 @@ const Index = () => {
         animate={shake ? "shake" : ""}
         variants={shakeAnimation}
       >
-        <AnimatePresence>
-          {showMessage && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold mb-4 inline-block"
-            >
-              Congratulations! You've reached a multiple of 5!
-            </motion.div>
-          )}
-        </AnimatePresence>
         <h1 className="text-4xl font-bold mb-4">Counter App</h1>
-        <div className="flex items-center justify-center space-x-4">
+        <div className="flex items-center justify-center space-x-4 mb-4">
           <Button onClick={decrement} variant="outline" size="icon">
             <Minus className="h-4 w-4" />
           </Button>
@@ -67,6 +65,11 @@ const Index = () => {
             <Plus className="h-4 w-4" />
           </Button>
         </div>
+        {count > 5 && (
+          <div className="w-64 mx-auto">
+            <Progress value={progress} className="w-full" />
+          </div>
+        )}
       </motion.div>
     </div>
   );
