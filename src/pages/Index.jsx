@@ -9,9 +9,11 @@ const Index = () => {
   const [shake, setShake] = useState(false);
   const [progress, setProgress] = useState(0);
   const [buttonsAtTop, setButtonsAtTop] = useState(false);
+  const [buttonsSpread, setButtonsSpread] = useState(false);
 
   useEffect(() => {
     setButtonsAtTop(count >= 20);
+    setButtonsSpread(count >= 21);
   }, [count]);
 
   const triggerShake = () => {
@@ -54,7 +56,7 @@ const Index = () => {
   };
 
   const renderButtons = () => (
-    <div className="flex items-center justify-center space-x-4 mb-4">
+    <div className={`flex items-center ${buttonsSpread ? 'justify-between w-full' : 'justify-center space-x-4'} mb-4`}>
       <Button onClick={decrement} variant="outline" size="icon">
         <Minus className="h-4 w-4" />
       </Button>
@@ -74,7 +76,7 @@ const Index = () => {
       )}
       <div className="flex-grow flex items-center justify-center">
         <motion.div
-          className="text-center"
+          className={`text-center ${buttonsSpread ? 'w-full px-4' : ''}`}
           animate={shake ? "shake" : ""}
           variants={shakeAnimation}
         >
