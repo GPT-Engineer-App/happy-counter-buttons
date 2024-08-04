@@ -8,6 +8,11 @@ const Index = () => {
   const [count, setCount] = useState(0);
   const [shake, setShake] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [buttonsAtTop, setButtonsAtTop] = useState(false);
+
+  useEffect(() => {
+    setButtonsAtTop(count >= 20);
+  }, [count]);
 
   const triggerShake = () => {
     setShake(true);
@@ -48,29 +53,40 @@ const Index = () => {
     }
   };
 
+  const renderButtons = () => (
+    <div className="flex items-center justify-center space-x-4 mb-4">
+      <Button onClick={decrement} variant="outline" size="icon">
+        <Minus className="h-4 w-4" />
+      </Button>
+      <span className="text-2xl font-bold">{count}</span>
+      <Button onClick={increment} variant="outline" size="icon">
+        <Plus className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <motion.div
-        className="text-center"
-        animate={shake ? "shake" : ""}
-        variants={shakeAnimation}
-      >
-        <h1 className="text-4xl font-bold mb-4">Counter App</h1>
-        <div className="flex items-center justify-center space-x-4 mb-4">
-          <Button onClick={decrement} variant="outline" size="icon">
-            <Minus className="h-4 w-4" />
-          </Button>
-          <span className="text-2xl font-bold">{count}</span>
-          <Button onClick={increment} variant="outline" size="icon">
-            <Plus className="h-4 w-4" />
-          </Button>
+    <div className="min-h-screen flex flex-col bg-gray-100">
+      {buttonsAtTop && (
+        <div className="w-full bg-white shadow-md p-4">
+          {renderButtons()}
         </div>
-        {count > 5 && (
-          <div className="w-64 mx-auto">
-            <Progress value={progress} className="w-full" />
-          </div>
-        )}
-      </motion.div>
+      )}
+      <div className="flex-grow flex items-center justify-center">
+        <motion.div
+          className="text-center"
+          animate={shake ? "shake" : ""}
+          variants={shakeAnimation}
+        >
+          <h1 className="text-4xl font-bold mb-4">Counter App</h1>
+          {!buttonsAtTop && renderButtons()}
+          {count > 5 && (
+            <div className="w-64 mx-auto">
+              <Progress value={progress} className="w-full" />
+            </div>
+          )}
+        </motion.div>
+      </div>
     </div>
   );
 };
