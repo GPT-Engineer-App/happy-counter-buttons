@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Plus, Minus } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Index = () => {
   const [count, setCount] = useState(0);
@@ -10,11 +10,27 @@ const Index = () => {
   const [progress, setProgress] = useState(0);
   const [buttonsAtTop, setButtonsAtTop] = useState(false);
   const [buttonsSpread, setButtonsSpread] = useState(false);
+  const [exploded, setExploded] = useState(false);
 
   useEffect(() => {
     setButtonsAtTop(count >= 20);
     setButtonsSpread(count >= 21);
+    if (count === 21) {
+      setExploded(false);
+    }
   }, [count]);
+
+  const handleButtonClick = (action) => {
+    if (count === 21) {
+      setExploded(true);
+      setTimeout(() => {
+        action();
+        setExploded(false);
+      }, 1000);
+    } else {
+      action();
+    }
+  };
 
   const triggerShake = () => {
     setShake(true);
@@ -57,13 +73,37 @@ const Index = () => {
 
   const renderButtons = () => (
     <div className={`flex items-center ${buttonsSpread ? 'justify-between w-full' : 'justify-center space-x-4'} mb-4`}>
-      <Button onClick={decrement} variant="outline" size="icon">
-        <Minus className="h-4 w-4" />
-      </Button>
+      <AnimatePresence>
+        {!exploded && (
+          <motion.div
+            key="decrement"
+            initial={count === 21 ? { scale: 1 } : {}}
+            animate={count === 21 ? { scale: [1, 1.2, 0] } : {}}
+            exit={{ scale: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Button onClick={() => handleButtonClick(decrement)} variant="outline" size="icon">
+              <Minus className="h-4 w-4" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <span className="text-2xl font-bold">{count}</span>
-      <Button onClick={increment} variant="outline" size="icon">
-        <Plus className="h-4 w-4" />
-      </Button>
+      <AnimatePresence>
+        {!exploded && (
+          <motion.div
+            key="increment"
+            initial={count === 21 ? { scale: 1 } : {}}
+            animate={count === 21 ? { scale: [1, 1.2, 0] } : {}}
+            exit={{ scale: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Button onClick={() => handleButtonClick(increment)} variant="outline" size="icon">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 
