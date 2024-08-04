@@ -15,9 +15,6 @@ const Index = () => {
   useEffect(() => {
     setButtonsAtTop(count >= 20);
     setButtonsSpread(count >= 21);
-    if (count === 21) {
-      setExploded(false);
-    }
   }, [count]);
 
   const handleButtonClick = (action) => {
@@ -27,6 +24,14 @@ const Index = () => {
         action();
         setExploded(false);
       }, 1000);
+    } else if (count === 20 && action === increment) {
+      action();
+      setTimeout(() => {
+        setExploded(true);
+        setTimeout(() => {
+          setExploded(false);
+        }, 1000);
+      }, 50);
     } else {
       action();
     }
